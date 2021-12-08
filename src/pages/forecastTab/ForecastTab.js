@@ -1,13 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import './ForecastTab.css';
+///////////////////////
+//// Build
+import React, {useContext, useEffect, useState} from 'react';
 import axios from "axios";
-import kelvinToCelsius from "../../helpers/kelvinToCelsius";
+
+///////////////////////
+//// Environmental
+import './ForecastTab.css';
 import createDateString from "../../helpers/createDateString";
+import {TempContext} from "../../context/TempProvider";
 
 function ForecastTab({coordinates}) {
     const [forecast, setForecast] = useState([]);
     const [error, setError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const {kelvinToTempType} = useContext(TempContext);
 
     const {REACT_APP_API_KEY} = process.env;
 
@@ -35,6 +41,10 @@ function ForecastTab({coordinates}) {
         if (coordinates) {
             getForecast();
         }
+        return function cleanup() {
+            source.cancel();
+            // clearInterval(loop);
+        };
     }, [coordinates]);
 
     console.log(isLoading)
@@ -52,7 +62,7 @@ function ForecastTab({coordinates}) {
                             </p>
                             <section className="forecast-weather">
                                 <span>
-                                    {kelvinToCelsius(day.temp.day)}
+                                    {kelvinToTempType(day.temp.day)}
                                 </span>
                                 <span className="weather-description">
                                     {day.weather[0].description}
