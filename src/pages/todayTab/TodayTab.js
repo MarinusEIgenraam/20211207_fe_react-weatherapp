@@ -9,13 +9,13 @@ function TodayTab({coordinates}) {
 	const [error, setError] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 
-	const API_KEY = 'ad91e97f999a924807f2f7f24cc5e3d2';
+	const {REACT_APP_API_KEY} = process.env;
 
 	useEffect(() => {
 		const source = axios.CancelToken.source();
 
 		async function fetchData() {
-			const API_URL = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,current,daily&appid=${API_KEY}`
+			const API_URL = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,current,daily&appid=${REACT_APP_API_KEY}`
 			setIsLoading(true)
 			setError(false);
 
