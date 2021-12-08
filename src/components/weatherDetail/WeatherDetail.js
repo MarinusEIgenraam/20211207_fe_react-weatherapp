@@ -1,16 +1,20 @@
 import React from 'react';
 import './WeatherDetail.css';
+import kelvinToCelsius from "../../helpers/kelvinToCelsius";
+import iconMapper from "../../helpers/iconMapper";
 
-function WeatherDetail() {
-  return (
-    <section className="day-part">
+function WeatherDetail({temp, type, description}) {
+    console.log(type)
+
+    return (
+        <section className="day-part">
       <span className="icon-wrapper">
-        *Icoontje van het weer*
+        {iconMapper(type)}
       </span>
-      <p className="description">Zonnig</p>
-      <p>13&deg; C</p>
-    </section>
-  );
+            <p className="description">{description}</p>
+            <p>{kelvinToCelsius(temp)}</p>
+        </section>
+    );
 }
 
 export default WeatherDetail;

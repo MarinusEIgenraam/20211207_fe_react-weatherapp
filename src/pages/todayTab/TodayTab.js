@@ -1,19 +1,73 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './TodayTab.css';
+import axios from "axios";
+import WeatherDetail from "../../components/weatherDetail/WeatherDetail";
+import createTimeString from "../../helpers/createTimeString";
 
-function TodayTab() {
-	return(
+function TodayTab({coordinates}) {
+	const [todaysWeather, setTodaysWeather] = useState([]);
+	const [error, setError] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+
+	const API_KEY = 'ad91e97f999a924807f2f7f24cc5e3d2';
+
+	useEffect(() => {
+		const source = axios.CancelToken.source();
+
+		async function fetchData() {
+			const API_URL = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,current,daily&appid=${API_KEY}`
+			setIsLoading(true)
+			setError(false);
+
+			try {
+				const result = await axios.get(API_URL, {cancelToken: source.token});
+				setTodaysWeather([
+					result.data.hourly[3],
+					result.data.hourly[5],
+					result.data.hourly[7],
+				]);
+				console.log(result.data)
+			} catch (e){
+				console.error(e);
+				setError(true);
+			}
+			setIsLoading(false);
+		}
+
+		if (coordinates) {
+			fetchData();
+		}
+
+	},[coordinates]);
+
+	console.log(todaysWeather)
+	return (
 		<div className="tab-wrapper">
+
 			<div className="chart">
-				Hier komt de chart!
+				{todaysWeather.map((moment) => {
+					return(
+						<WeatherDetail
+							key={moment.dt}
+							temp={moment.temp}
+							type={moment.weather[0].main}
+							description={moment.weather[0].description}
+						/>
+
+					)
+				})}
 			</div>
 			<div className="legend">
-				<span>08:00 uur</span>
-				<span>12:00 uur</span>
-				<span>16:00 uur</span>
+
+				{todaysWeather.map((day) => {
+					return <span key={`${day.dt}-timestamp`}>{createTimeString(day.dt)}</span>
+				})}
 			</div>
+			{isLoading && <span>Het weer laat even op zich wachten</span>}
+			{error && <span>De weersvoorspelling is mislukt, probeer het nog eens</span>}
 		</div>
-  );
+
+	);
 };
 
 export default TodayTab;
