@@ -1,6 +1,6 @@
 ///////////////////////
 //// Build
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import axios from 'axios';
 
@@ -9,18 +9,22 @@ import axios from 'axios';
 import SearchBar from './components/searchBar/SearchBar';
 import TabBarMenu from './components/tabBarMenu/TabBarMenu';
 import MetricSlider from './components/metricSlider/MetricSlider';
-import './App.css';
 import ForecastTab from "./pages/forecastTab/ForecastTab";
 import TodayTab from "./pages/todayTab/TodayTab";
 
+///////////////////////
+//// Environmental
+import './App.css';
 import kelvinToCelsius from "./helpers/kelvinToCelsius";
-
+import {TempContext} from "./context/TempProvider";
 const {REACT_APP_API_KEY} = process.env;
 
 function App() {
     const [weatherData, setWeatherData] = useState({});
-    const [location, setLocation] = useState('');
+    const [location, setLocation] = useState('Vlaardingen');
     const [error, setError] = useState(false);
+
+    const {kelvinToTempType} = useContext(TempContext);
 
 
     useEffect(() => {
@@ -68,7 +72,7 @@ function App() {
                 <>
                     <h2>{weatherData.weather[0].description}</h2>
                     <h3>{weatherData.name}</h3>
-                    <h1>{kelvinToCelsius(weatherData.main.temp)}</h1>
+                    <h1>{kelvinToTempType(weatherData.main.temp)}</h1>
                 </>
             }
           </span>
